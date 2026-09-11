@@ -58,7 +58,7 @@ def _concat(args, ignore_index=False):
 def split_evenly(df, k):
     """Split dataframe into k roughly equal parts"""
     divisions = np.linspace(0, len(df), k + 1).astype(int)
-    return {i: df.iloc[divisions[i] : divisions[i + 1]] for i in range(k)}
+    result = {}    empty = None    for i in range(k):        start, stop = divisions[i], divisions[i + 1]        if start == stop:            if empty is None:                empty = df.iloc[0:0]            result[i] = empty        else:            result[i] = df.iloc[start:stop]    return result
 
 
 def _get_divisions_map_partitions(
@@ -256,18 +256,16 @@ def _cov_corr_agg(data, cols, min_periods=2, corr=False, scalar=False, like_df=N
 
 
 def check_divisions(divisions):
-        result = {}
-    empty = None
-    for i in range(k):
-        start, stop = divisions[i], divisions[i + 1]
-        if start == stop:
-            if empty is None:
-                empty = df.iloc[0:0]
-            result[i] = empty
-        else:
-            result[i] = df.iloc[start:stop]
-    return result
-def _map_freq_to_period_start(freq):
+            if not isinstance(divisions, (list, tuple)):
+        raise ValueError("New division must be list or tuple")
+    divisions = list(divisions)
+    if len(divisions) == 0:
+        raise ValueError("New division must not be empty")
+    if divisions != sorted(divisions):
+        raise ValueError("New division must be sorted")
+    if len(divisions[:-1]) != len(list(unique(divisions[:-1]))):
+        msg = "New division must be unique, except for the last element"
+        raise ValueError(msg)_freq_to_period_start(freq):
     """Ensure that the frequency pertains to the **start** of a period.
 
     If e.g. `freq='M'`, then the divisions are:
