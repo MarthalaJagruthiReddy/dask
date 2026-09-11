@@ -58,7 +58,17 @@ def _concat(args, ignore_index=False):
 def split_evenly(df, k):
     """Split dataframe into k roughly equal parts"""
     divisions = np.linspace(0, len(df), k + 1).astype(int)
-        return (lambda empty: {i: df.iloc[divisions[i] : divisions[i + 1]] if divisions[i] != divisions[i + 1] else empty for i in range(k)})(df.iloc[0:0])
+            result = {}
+    empty = None
+    for i in range(k):
+        start, stop = divisions[i], divisions[i + 1]
+        if start == stop:
+            if empty is None:
+                empty = df.iloc[0:0]
+            result[i] = empty
+        else:
+            result[i] = df.iloc[start:stop]
+    return result
 
 
 def _get_divisions_map_partitions(
