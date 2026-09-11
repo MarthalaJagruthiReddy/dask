@@ -58,7 +58,7 @@ def _concat(args, ignore_index=False):
 def split_evenly(df, k):
     """Split dataframe into k roughly equal parts"""
     divisions = np.linspace(0, len(df), k + 1).astype(int)
-            result = {}
+    result = {}
     empty = None
     for i in range(k):
         start, stop = divisions[i], divisions[i + 1]
@@ -266,7 +266,7 @@ def _cov_corr_agg(data, cols, min_periods=2, corr=False, scalar=False, like_df=N
 
 
 def check_divisions(divisions):
-            if not isinstance(divisions, (list, tuple)):
+    if not isinstance(divisions, (list, tuple)):
         raise ValueError("New division must be list or tuple")
     divisions = list(divisions)
     if len(divisions) == 0:
