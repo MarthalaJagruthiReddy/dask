@@ -265,7 +265,10 @@ def check_divisions(divisions):
         raise ValueError("New division must be sorted")
     if len(divisions[:-1]) != len(list(unique(divisions[:-1]))):
         msg = "New division must be unique, except for the last element"
-        raise ValueError(msg)_freq_to_period_start(freq):
+        raise ValueError(msg)
+
+
+def _map_freq_to_period_start(freq):
     """Ensure that the frequency pertains to the **start** of a period.
 
     If e.g. `freq='M'`, then the divisions are:
