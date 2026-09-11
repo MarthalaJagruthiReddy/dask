@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from dask.dataframe.core import split_evenly
 from dask.dataframe.dask_expr import Repartition, from_pandas, repartition
 from dask.dataframe.dask_expr.tests._util import _backend_library, assert_eq
 
@@ -29,8 +30,7 @@ def test_repartition_combine_similar(kwargs):
     arg1 = expected.x
     arg2 = expected.y
     expected["new"] = arg1 + arg2
-    from dask.dataframe.core import split_evenly
-assert result._name == expected._name
+    assert result._name == expected._name
 
     expected_pdf = pdf.copy()
     expected_pdf["new"] = expected_pdf.x + expected_pdf.y
@@ -115,9 +115,6 @@ def test_repartition_empty_partitions_dtype():
     )
 
 
-def test_repartition_filter_pushdown():
-
-
 def test_split_evenly_reuses_empty_partitions():
     pdf = pd.DataFrame({"x": [1, 2, 3]})
 
@@ -125,6 +122,9 @@ def test_split_evenly_reuses_empty_partitions():
 
     assert list(map(len, result.values())) == [0, 1, 0, 1, 1]
     assert result[0] is result[2]
+
+
+def test_repartition_filter_pushdown():
     pdf = pd.DataFrame({"x": [1, 2, 3, 4, 5, 6, 7, 8] * 10, "y": 1, "z": 2})
     df = from_pandas(pdf, npartitions=10)
     result = df.repartition(npartitions=5)
